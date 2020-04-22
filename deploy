@@ -1,0 +1,12 @@
+#!/bin/bash
+
+user="server user"
+ip="server ip address"
+script_name_on_server="deploy_on_server"
+
+git_link=$1
+folder=$2
+file_name=$3
+
+echo "Connecting to server..."
+ssh $user@$ip "$script_name_on_server $user $git_link $folder $file_name"

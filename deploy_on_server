@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# deploy http://... coinfeed2 run.py
+user=$1
+git_link=$2
+folder=$3
+file_name=$4
+process_name=$folder
+
+# creating project folder
+echo "Cloning repository to /$folder"
+git clone "$git_link" "$folder"
+cd "$folder"
+
+# installing requirements
+pipenv sync
+
+# supervisor
+echo "Configuring supervisor"
+cd /etc/supervisor/conf.d/
+
+echo "[program:$process_name]
+command=pipenv run python $file_name
+directory=/$user/$folder
+autostart=false
+autorestart=true
+stderr_logfile=/$user/$folder/err.log" > "$process_name".conf
+
+supervisorctl reread
+supervisorctl update
+
+echo "Entering project folder"
+cd /$user/$folder/
+exec bash
